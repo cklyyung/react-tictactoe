@@ -4,7 +4,10 @@ import './index.css';
 
   function Square(props) {
     return (
-      <button className="square" onClick={props.onClick}>
+      <button
+        className={props.highlight ? "square-win" : "square"}
+        onClick={props.onClick}
+      >
         {props.value}
       </button>
     );
@@ -12,11 +15,14 @@ import './index.css';
   
   class Board extends React.Component {
     renderSquare(x,y) {
+      let winningLine = findWinningLine(this.props.squares);
+      let highlight = (winningLine && winningLine.includes([x,y].toString())) ? true : null;
       return (
         <Square
           key={(x,y)}
           value={this.props.squares[x][y]}
           onClick={() => this.props.onClick(x,y)}
+          highlight={highlight}
         />
       );
     }
@@ -103,7 +109,7 @@ import './index.css';
         return (
           <li key={move}>
             <button onClick={() => this.jumpTo(move)}>
-              {move == this.state.stepNumber ? <b>{desc}</b> : desc}
+              {move === this.state.stepNumber ? <b>{desc}</b> : desc}
             </button>
           </li>
         )
@@ -162,6 +168,28 @@ import './index.css';
     return "draw";
   }
   
+  function findWinningLine(squares) {
+    let winningLine;
+    for (let i = 0; i < 3; i++) {
+      if (squares[i][0] && squares[i][0] === squares[i][1]&& squares[i][0] === squares[i][2]) {
+        winningLine = [[i,0], [i,1], [i,2]]; // horizontal win
+      }
+      else if (squares[0][i] && squares[0][i] === squares[1][i]&& squares[0][i] === squares[2][i]) {
+        winningLine = [[0,i], [1,i], [2,i]]; // vertical win
+      }
+    }
+    if (squares[1][1] && squares[1][1] === squares[0][0] && squares[1][1] === squares[2][2]) {
+      winningLine = [[0,0], [1,1], [2,2]]
+    }
+    if (squares[1][1] && squares[1][1] === squares[0][2] && squares[1][1] === squares[2][0]) {
+      winningLine = [[2,0], [1,1], [0,2]]
+    }
+    if (winningLine) {
+      return winningLine.map((coords) => coords.toString());
+    }
+    return winningLine;
+  }
+
   // ========================================
   
   ReactDOM.render(
