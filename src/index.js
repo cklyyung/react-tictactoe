@@ -58,6 +58,7 @@ import './index.css';
         }],
         stepNumber: 0,
         xIsNext: true,
+        sortLeastRecent: true,
       };
     }
 
@@ -84,6 +85,12 @@ import './index.css';
         stepNumber: step,
         xIsNext: (step % 2) === 0,
       });
+    }
+
+    toggleSort() {
+      this.setState({
+        sortLeastRecent: !this.state.sortLeastRecent,
+      })
     }
 
     restart() {
@@ -138,7 +145,17 @@ import './index.css';
                 <button onClick={() => this.restart()}>Restart</button>
               </div>
             </div>
-            <ol>{moves}</ol>
+            <div>
+              <div className="game">
+                <div>{this.state.sortLeastRecent ? 'Least Recent' : 'Most Recent'} Move At Top</div>
+                <div className="game-info">
+                  <button onClick={() =>this.toggleSort()}>
+                    Swap
+                  </button>
+                </div>
+              </div>
+              <ol>{this.state.sortLeastRecent ? moves : moves.reverse()}</ol>
+            </div>
           </div>
         </div>
       );
