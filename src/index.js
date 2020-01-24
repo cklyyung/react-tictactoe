@@ -48,6 +48,7 @@ import './index.css';
       this.state = {
         history: [{
           squares: Array.from(Array(3), () => Array(3).fill(null)),
+          move: null,
         }],
         stepNumber: 0,
         xIsNext: true,
@@ -65,6 +66,7 @@ import './index.css';
       this.setState({
         history: history.concat([{
           squares:squares,
+          move: [x,y],
         }]),
         stepNumber: history.length,
         xIsNext: !this.state.xIsNext,
@@ -78,6 +80,17 @@ import './index.css';
       });
     }
 
+    restart() {
+      this.setState({
+        stepNumber: 0,
+        history: [{
+          squares: Array.from(Array(3), () => Array(3).fill(null)),
+          move: null,
+        }],
+        xIsNext: true
+      })
+    }
+
     render() {
       const history = this.state.history;
       const current = history[this.state.stepNumber];
@@ -85,15 +98,12 @@ import './index.css';
 
       const moves = history.map((step, move) => {
         const desc = move ?
-          'Go to move #' + move :
+          'Go to move #' + move + ' (' + history[move].move + ')':
           'Go to game start';
         return (
           <li key={move}>
-            <button
-              style={ move === this.state.stepNumber ? { fontWeight: 'bold' } : { fontWeight: 'normal' } }
-              onClick={() => this.jumpTo(move)}
-            >
-                {desc}
+            <button onClick={() => this.jumpTo(move)}>
+              {move == this.state.stepNumber ? <b>{desc}</b> : desc}
             </button>
           </li>
         )
@@ -116,7 +126,12 @@ import './index.css';
             />
           </div>
           <div className="game-info">
-            <div>{status}</div>
+            <div className="game">
+              {status}
+              <div className="game-info">
+                <button onClick={() => this.restart()}>Restart</button>
+              </div>
+            </div>
             <ol>{moves}</ol>
           </div>
         </div>
