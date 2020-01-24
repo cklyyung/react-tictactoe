@@ -89,13 +89,20 @@ import './index.css';
           'Go to game start';
         return (
           <li key={move}>
-            <button onClick={() => this.jumpTo(move)}>{desc}</button>
+            <button
+              style={ move === this.state.stepNumber ? { fontWeight: 'bold' } : { fontWeight: 'normal' } }
+              onClick={() => this.jumpTo(move)}
+            >
+                {desc}
+            </button>
           </li>
         )
       });
 
       let status;
-      if (winner) {
+      if (winner === "draw") {
+        status = 'It\'s a draw!';
+      } else if (winner) {
         status = 'Winner: ' + winner;
       } else {
         status = 'Next player: ' + (this.state.xIsNext ? 'X' : 'O');
@@ -130,7 +137,14 @@ import './index.css';
       || (squares[1][1] === squares[0][2] && squares[1][1] === squares[2][0]))) {
         return squares[1][1];
     }
-    return null;
+    for (let i = 0; i < 3; i++) {
+      for (let j = 0; j < 3; j++) {
+        if (squares[i][j] == null) {
+          return null;
+        }
+      }
+    }
+    return "draw";
   }
   
   // ========================================
